@@ -14,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
 import es.codeurjc.test.tablonanuncios.Application;
-import io.github.bonigarcia.wdm.WebDriverManager;
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AnuncioTest {
@@ -23,11 +22,6 @@ public class AnuncioTest {
 	int port;
 
 	WebDriver driver;
-	
-	@BeforeAll
-	public static void setupClass() {
-		WebDriverManager.chromedriver().setup();
-	}
 	
 	@BeforeEach
 	public void setup() {
