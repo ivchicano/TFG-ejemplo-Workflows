@@ -1,0 +1,40 @@
+name: CD Docker Build
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Run tests
+        run: mvn test
+        working-directory: ./backend
+
+      - name: Login to DockerHub
+        run: docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" -p "${{ secrets.DOCKERHUB_TOKEN }}"
+
+      - name: Build and push Docker image
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tfg:latest -t ${{ secrets.DOCKERHUB_USERNAME }}/tfg:$(date +'%Y%m%d%H%M') -f docker/Dockerfile .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/tfg:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/tfg:$(date +'%Y%m%d%H%M')
+
+      - name: Build and push Docker image with release tag
+        if: github.event_name == 'release'
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tfg:${{ github.event.release.tag_name }} -f docker/Dockerfile .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/tfg:${{ github.event.release.tag_name }}
