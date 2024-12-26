@@ -29,9 +29,10 @@ jobs:
       - name: Build and push Docker image
         if: github.event_name == 'workflow_dispatch'
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tfg:latest -t ${{ secrets.DOCKERHUB_USERNAME }}/tfg:$(date +'%Y%m%d%H%M') -f docker/Dockerfile .
+          tag=$(date +'%Y%m%d.%H%M%S')
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tfg:latest -t ${{ secrets.DOCKERHUB_USERNAME }}/tfg:$tag -f docker/Dockerfile .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/tfg:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/tfg:$(date +'%Y%m%d%H%M')
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/tfg:$tag
 
       - name: Build and push Docker image with release tag
         if: github.event_name == 'release'
