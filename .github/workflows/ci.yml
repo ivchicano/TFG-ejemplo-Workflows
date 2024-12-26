@@ -1,9 +1,9 @@
 name: CI TFG
 
 on:
-  push:
+  pull_request:
     branches:
-      - add-ci-workflow
+      - main
 
 jobs:
   build:
