@@ -30,12 +30,13 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         run: |
           tag=$(date +'%Y%m%d.%H%M%S')
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tfg:latest -t ${{ secrets.DOCKERHUB_USERNAME }}/tfg:$tag -f docker/Dockerfile .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/tfg:latest
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tfg:main -t ${{ secrets.DOCKERHUB_USERNAME }}/tfg:$tag -f docker/Dockerfile .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/tfg:main
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/tfg:$tag
 
       - name: Build and push Docker image with release tag
         if: github.event_name == 'release'
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tfg:${{ github.event.release.tag_name }} -f docker/Dockerfile .
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tfg:latest -t ${{ secrets.DOCKERHUB_USERNAME }}/tfg:${{ github.event.release.tag_name }} -f docker/Dockerfile .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/tfg:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/tfg:${{ github.event.release.tag_name }}
